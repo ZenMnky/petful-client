@@ -1,4 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import config from '../config';
+
+const API_BASE = config.API_BASE_ENDPOINT;
 
 export default class AdoptionPage extends Component {
     
@@ -23,7 +26,8 @@ export default class AdoptionPage extends Component {
                 imageURL: null,
                 name: null,
                 story: null,
-            }
+            },
+            adoptionQueue: []
         }
            
     };
@@ -31,13 +35,14 @@ export default class AdoptionPage extends Component {
 
     componentDidMount(){
         this.fetchPets();
+        this.fetchPeople();
     }
 
     fetchPets(){
         this.setState({
             petLoading: true,
         })
-        fetch('https://zenmnky-petful-server.herokuapp.com/api/pets', {
+        fetch(`${API_BASE}/pets`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -53,6 +58,17 @@ export default class AdoptionPage extends Component {
             })
         })
     }
+
+    fetchPeople(){
+        fetch(`${API_BASE}/people`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+        })
+        .then(res => res.json())
+        .then(data => this.setState({adoptionQueue: data}))
+    }
     
     render() {
 
@@ -61,6 +77,9 @@ export default class AdoptionPage extends Component {
             let cat = this.state.cat;
             let dogPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.clipartkey.com%2Fmpngs%2Fm%2F5-56136_grayscale-dog-clipart-dog-silhouette-clip-art.png';
             let catPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F60%2FCat_silhouette.svg%2F1920px-Cat_silhouette.svg.png';
+            let adoptionQueue = this.state.adoptionQueue.map(name => {
+                return <li>{name}</li>
+            }) || <p>loading...</p>;
 
 
 
@@ -70,10 +89,7 @@ export default class AdoptionPage extends Component {
                 <section id='adoption-name-queue'>
                     <h2>Adoption Queue</h2>
                     <ol>
-                        <li>name</li>
-                        <li>name</li>                        
-                        <li>name</li>
-                        <li>name</li>
+                        {adoptionQueue}
                     </ol>
                 </section>
                 <section id='adoption-pet-queue'>
