@@ -16,3 +16,14 @@ html {
 img {
     width: 100%;
 }
+
+.flex-container {
+    display: flex;
+    flex-direction: column;
+}
+/* 
+@media all and (min-width: 769px){ 
+    .flex-container {
+        flex-direction: row;
+    }
+} */
