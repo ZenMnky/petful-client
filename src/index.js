@@ -2,6 +2,12 @@ import './index.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Root from './root/Root'
+import App from './App/App';
+import {BrowserRouter as Router} from 'react-router-dom';
 
-ReactDOM.render(<Root />, document.getElementById('root'))
+ReactDOM.render(
+    <Router>
+        <App />
+    </Router>, 
+    document.getElementById('root')
+)
