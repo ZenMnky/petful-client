@@ -27,7 +27,9 @@ export default class AdoptionPage extends Component {
                 name: null,
                 story: null,
             },
-            adoptionQueue: []
+            adoptionQueue: [],
+            newName: null,
+            error: null
         }
            
     };
@@ -68,6 +70,44 @@ export default class AdoptionPage extends Component {
         })
         .then(res => res.json())
         .then(data => this.setState({adoptionQueue: data}))
+        .catch(error => this.setState({ error }));
+    }
+
+    postName(name){
+        fetch(`${API_BASE}/people`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({ name: name })
+        })
+        .catch(error => this.setState({ error }));
+    }
+
+    handleSubmit(e){
+        // prevent submission
+        e.preventDefault();
+
+        // grab the name
+        let {newName} = this.state;
+
+        // clear input field
+         this.setState({
+            newName: ''
+         });
+        
+        // post name to API
+        this.postName(newName)
+
+        // update local state
+        this.state.adoptionQueue.push(newName);
+    }
+       
+
+    nameChanged(value){
+        this.setState({
+            newName: value
+        })
     }
     
     render() {
@@ -77,9 +117,11 @@ export default class AdoptionPage extends Component {
             let cat = this.state.cat;
             let dogPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.clipartkey.com%2Fmpngs%2Fm%2F5-56136_grayscale-dog-clipart-dog-silhouette-clip-art.png';
             let catPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F60%2FCat_silhouette.svg%2F1920px-Cat_silhouette.svg.png';
-            let adoptionQueue = this.state.adoptionQueue.map(name => {
-                return <li>{name}</li>
-            }) || <p>loading...</p>;
+            let adoptionQueue = (this.state.adoptionQueue)
+                ? this.state.adoptionQueue.map(name => {
+                    return <li>{name}</li>
+                    }) 
+                : <p>loading...</p>;
 
 
 
@@ -91,6 +133,22 @@ export default class AdoptionPage extends Component {
                     <ol>
                         {adoptionQueue}
                     </ol>
+                </section>
+                <section id='adoption-name-queue_add-name'>
+                    <form>
+                        <input 
+                            type='text' 
+                            value={this.state.newName}
+                            onChange={e => this.nameChanged(e.target.value)}
+                            placeholder='add your name to the list' 
+                        />
+                        <button 
+                            type='submit' 
+                            onClick={e => this.handleSubmit(e)}
+                        >
+                            Submit name
+                        </button>
+                    </form>
                 </section>
                 <section id='adoption-pet-queue'>
                     <div id='adoption-pet-queue_dog-container'>
