@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import config from '../config';
 import cuid from 'cuid';
+import {PeopleService} from '../Services/peopleService';
 
+import config from '../config';
 const API_BASE = config.API_BASE_ENDPOINT;
 
 export default class AdoptionPage extends Component {
@@ -63,15 +64,10 @@ export default class AdoptionPage extends Component {
     }
 
     fetchPeople(){
-        fetch(`${API_BASE}/people`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-        })
-        .then(res => res.json())
-        .then(data => this.setState({adoptionQueue: data}))
-        .catch(error => this.setState({ error }));
+        PeopleService.get()
+            .then(res => res.json())
+            .then(data => this.setState({adoptionQueue: data}))
+            .catch(error => this.setState({ error }));
     }
 
     postName(name){
@@ -151,7 +147,7 @@ export default class AdoptionPage extends Component {
                         </button>
                     </form>
                 </section>
-                <section id='adoption-pet-queue'>
+                <section id='adoption-pet-queue' className='flex-fullscreen-row'>
                     <div id='adoption-pet-queue_dog-container'>
                         <img
                             src={dog.imageURL || dogPlaceholder} 
@@ -167,8 +163,7 @@ export default class AdoptionPage extends Component {
                             </ul>
                         </div>
                     </div>
-                </section>
-                <section id='adoption-pet-queue'>
+                
                     <div id='adoption-pet-queue_cat-container'>
                         <img
                             src={cat.imageURL || catPlaceholder}  

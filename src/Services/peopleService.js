@@ -1,0 +1,13 @@
+import config from '../config';
+const API_BASE = config.API_BASE_ENDPOINT;
+
+export const PeopleService = {
+    get() {
+        return fetch(`${API_BASE}/people`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                  },
+            })
+    },
+};
