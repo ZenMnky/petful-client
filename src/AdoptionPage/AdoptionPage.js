@@ -27,6 +27,7 @@ export default class AdoptionPage extends Component {
                 story: null,
             },
             adoptionQueue: [],
+            newFam: {},
             newName: '',
             error: null
         }
@@ -110,7 +111,6 @@ export default class AdoptionPage extends Component {
         PetService.remove(petType)
             .then(res => res.json())
             .then(data => {
-                console.log(data);
                 this.setState({
                     newFam: data
                 })
@@ -141,17 +141,26 @@ export default class AdoptionPage extends Component {
                     return <li key={cuid()}>{name}</li>
                     }) 
                 : <p>loading...</p>;
-
+            let adoptionMsg = this.state.newFam.pet ? `${this.state.newFam.owner} just adopted ${this.state.newFam.pet.name}!`
+                : '';
 
 
         return (
             <div className='flex-container'>
                 <h1>Adoption Page</h1>
-                <section id='adoption-name-queue'>
-                    <h2>Adoption Queue</h2>
-                    <ol>
-                        {adoptionQueue}
-                    </ol>
+                <section id='adoption-name-queue' className='flex-fullscreen-row'>
+                    <div id='adoption-name-queue_list'>
+                        <h2>Adoption Queue</h2>
+                        <ol>
+                            {adoptionQueue}
+                        </ol>
+                    </div>
+                    <div id='adoption-name-queue_recent-adoption'>
+                        <h2>Recent Adoptions</h2>
+                        <div>
+                            <p>{adoptionMsg}</p>
+                        </div>
+                    </div>
                 </section>
                 <section id='adoption-name-queue_add-name'>
                     <form>
@@ -213,14 +222,15 @@ export default class AdoptionPage extends Component {
 
 
 /**
- * thinking: 
- * what happens when we're routed to the adoption page?
- * send requests to the API 
- * - we need the next pets up for adoption - GET /api/pets?
- * - we need to see the list of names in queue - GET /api/people
+ * 🤔💭 thinking: 
+ * Next, need to implement functionality for User Story #5
+ * When the user's name reaches the top of the list,
+ *  the user should be able to select a dog or cat to adopt
  * 
- * UI to display the above
- * UI to add name to list + API POST request to add name
+ * 
+ * Aside, also need to support the following feature: 
+ * - I can see other pets being adopted until I am at the front of the line.
+ * so, create a div that displays "name" has adopted "pet name"
  */
 
 
