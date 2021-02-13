@@ -37,12 +37,12 @@ export default class AdoptionPage extends Component {
     componentDidMount(){
         this.fetchPets();
         this.fetchPeople();
-        this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
+        // this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
 
     }
 
     componentWillUnmount(){
-        clearInterval(this.autoAdopt);
+        // clearInterval(this.autoAdopt);
     }
 
     fetchPets(){
