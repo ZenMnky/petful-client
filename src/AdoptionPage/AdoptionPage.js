@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import config from '../config';
+import cuid from 'cuid';
 
 const API_BASE = config.API_BASE_ENDPOINT;
 
@@ -28,7 +29,7 @@ export default class AdoptionPage extends Component {
                 story: null,
             },
             adoptionQueue: [],
-            newName: null,
+            newName: '',
             error: null
         }
            
@@ -119,7 +120,7 @@ export default class AdoptionPage extends Component {
             let catPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F60%2FCat_silhouette.svg%2F1920px-Cat_silhouette.svg.png';
             let adoptionQueue = (this.state.adoptionQueue)
                 ? this.state.adoptionQueue.map(name => {
-                    return <li>{name}</li>
+                    return <li key={cuid()}>{name}</li>
                     }) 
                 : <p>loading...</p>;
 
