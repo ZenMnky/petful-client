@@ -31,6 +31,7 @@ export default class AdoptionPage extends Component {
             newName: '',
             trackedUserName: '',
             userMayAdopt: false,
+            showUserAdoptionMsg: false,
             error: null
         }
            
@@ -170,7 +171,12 @@ export default class AdoptionPage extends Component {
                 : '';
 
             let alertUserToAdopt = this.state.userMayAdopt ? <p className='userMayAdoptMsg'> Now it's your turn {this.state.trackedUserName} to choose a pet to adopt!</p> : '';
-
+            
+            let userAdoptionMsg = (this.state.showUserAdoptionMsg) ? (
+                    <section id='user-adoption-msg'>
+                        <h1>Thank you for adding this pet to your family!</h1>
+                    </section>
+                ) : null;
 
         return (
             <div id='main-container' className='flex-container'>
