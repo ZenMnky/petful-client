@@ -4,21 +4,42 @@
   
 html, body {
     height: 100%;
-    min-height: 100%;
     margin: 0;
     width: 100%;
+    text-align: center;
 }
 
-html {
-    height: 100%;
+body, #main-container {
+    min-height: 100vh;
 }
 
+header, footer {
+    background-color: cornflowerblue;
+}
+header a:link, footer a:link, button a:link {
+    text-decoration: none;
+}
+
+ul {
+    list-style-type: none;
+}
 img {
     width: 100%;
 }
 
 section {
     margin: 15px;
+}
+ #adoption-pet-queue img {
+    width: 500px;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px;
+}
+button {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 8px;
 }
 
 .userMayAdoptMsg {
@@ -28,6 +49,8 @@ section {
 .flex-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .flex-fullscreen-row {

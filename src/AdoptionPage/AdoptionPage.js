@@ -173,7 +173,7 @@ export default class AdoptionPage extends Component {
 
 
         return (
-            <div className='flex-container'>
+            <div id='main-container' className='flex-container'>
                 <h1>Adoption Page</h1>
                 <section id='adoption-name-queue' className='flex-fullscreen-row'>
                     <section id='adoption-name-queue_list'>
@@ -183,7 +183,7 @@ export default class AdoptionPage extends Component {
                             {adoptionQueue}
                         </ol>
                     </section>
-                    <section id='adoption-name-queue_recent-adoption'>
+                    <section id='adoption-name-queue_recent-adoption' hidden={(this.state.newFam.pet) ? false : true}>
                         <h2>Recent Adoptions</h2>
                         <div>
                             <p>{adoptionMsg}</p>
@@ -191,7 +191,7 @@ export default class AdoptionPage extends Component {
                     </section>
                 </section>
                 <section id='adoption-name-queue_add-name'>
-                    <form>
+                    <form className='flex-container'>
                         <input 
                             type='text' 
                             value={this.state.newName}
