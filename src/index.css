@@ -21,9 +21,14 @@ img {
     display: flex;
     flex-direction: column;
 }
-/* 
+
+.flex-fullscreen-row {
+    display: flex;
+    flex-direction: column;
+}
+
 @media all and (min-width: 769px){ 
-    .flex-container {
+    .flex-fullscreen-row{
         flex-direction: row;
     }
-} */
+}

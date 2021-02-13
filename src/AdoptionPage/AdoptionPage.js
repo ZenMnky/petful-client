@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import config from '../config';
 import cuid from 'cuid';
-
-const API_BASE = config.API_BASE_ENDPOINT;
-
+import {PeopleService} from '../Services/peopleService';
+import {PetService} from '../Services/petService';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 export default class AdoptionPage extends Component {
     
     constructor(props){
@@ -39,49 +38,39 @@ export default class AdoptionPage extends Component {
     componentDidMount(){
         this.fetchPets();
         this.fetchPeople();
+        this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
+
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.autoAdopt);
     }
 
     fetchPets(){
         this.setState({
             petLoading: true,
         })
-        fetch(`${API_BASE}/pets`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-        })
-        .then(res => res.json())
-        .then(data => {
-            let {cat, dog } = data;
-            this.setState({
-                petLoading: false,
-                dog: dog,
-                cat: cat
+        PetService.get()
+            .then(res => res.json())
+            .then(data => {
+                let {cat, dog } = data;
+                this.setState({
+                    petLoading: false,
+                    dog: dog,
+                    cat: cat
+                })
             })
-        })
     }
 
     fetchPeople(){
-        fetch(`${API_BASE}/people`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-        })
-        .then(res => res.json())
-        .then(data => this.setState({adoptionQueue: data}))
-        .catch(error => this.setState({ error }));
+        PeopleService.get()
+            .then(res => res.json())
+            .then(data => this.setState({adoptionQueue: data}))
+            .catch(error => this.setState({ error }));
     }
 
     postName(name){
-        fetch(`${API_BASE}/people`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify({ name: name })
-        })
+       PeopleService.post(name)
         .catch(error => this.setState({ error }));
     }
 
@@ -98,10 +87,40 @@ export default class AdoptionPage extends Component {
          });
         
         // post name to API
-        this.postName(newName)
+        PeopleService.post(newName)
+            .catch(error => this.setState({ error }));
 
         // update local state
         this.state.adoptionQueue.push(newName);
+    }
+
+    handleAutoAdoption = () => {
+        
+        // randomly choose 'cat' or 'dog' for :pet
+        let petOption = ['cat', 'dog']
+
+        let selectedPet = petOption[Math.round(Math.random())];
+
+        console.log(`autoAdopt ${selectedPet}`)
+
+        this.removePetAndOwner(selectedPet)
+
+    }
+
+    removePetAndOwner = (petType) => {
+        PetService.remove(petType)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                this.setState({
+                    newFam: data
+                })
+            })
+            .then(() => {
+                this.fetchPets();
+                this.fetchPeople();
+            } )
+            .catch(error => this.setState({ error }));
     }
        
 
@@ -151,10 +170,11 @@ export default class AdoptionPage extends Component {
                         </button>
                     </form>
                 </section>
-                <section id='adoption-pet-queue'>
+                <section id='adoption-pet-queue' className='flex-fullscreen-row'>
+                    <ErrorBoundary>
                     <div id='adoption-pet-queue_dog-container'>
                         <img
-                            src={dog.imageURL || dogPlaceholder} 
+                            src={(dog.imageURL)? dog.imageURL : dogPlaceholder} 
                             alt={`meet the dog called ${dog.name}`} 
                         />
                         <div id='dog-story'>
@@ -167,11 +187,11 @@ export default class AdoptionPage extends Component {
                             </ul>
                         </div>
                     </div>
-                </section>
-                <section id='adoption-pet-queue'>
+                    </ErrorBoundary>
+                    <ErrorBoundary>
                     <div id='adoption-pet-queue_cat-container'>
                         <img
-                            src={cat.imageURL || catPlaceholder}  
+                            src={(cat.imageURL) ? cat.imageURL : catPlaceholder}  
                             alt={`meet the cat called ${cat.name}`}  
                         />
                         <div id='cat-story'>
@@ -184,6 +204,7 @@ export default class AdoptionPage extends Component {
                             </ul>
                         </div>
                     </div>
+                    </ErrorBoundary>
                 </section>
 
             </div>
