@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import cuid from 'cuid';
 import {PeopleService} from '../Services/peopleService';
 import {PetService} from '../Services/petService';
-import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 export default class AdoptionPage extends Component {
     
     constructor(props){
@@ -171,24 +170,24 @@ export default class AdoptionPage extends Component {
                     </form>
                 </section>
                 <section id='adoption-pet-queue' className='flex-fullscreen-row'>
-                    <ErrorBoundary>
-                    <div id='adoption-pet-queue_dog-container'>
-                        <img
-                            src={(dog.imageURL)? dog.imageURL : dogPlaceholder} 
-                            alt={`meet the dog called ${dog.name}`} 
-                        />
-                        <div id='dog-story'>
-                            <ul>
-                                <li>Name: {dog.name}</li>
-                                <li>Gender: {dog.gender} </li>
-                                <li>Age: {dog.age}</li>
-                                <li>Breed: {dog.breed}</li>
-                                <li>Story: {dog.story}</li>
-                            </ul>
+                    
+                        <div id='adoption-pet-queue_dog-container'>
+                            <img
+                                src={(dog.imageURL)? dog.imageURL : dogPlaceholder} 
+                                alt={`meet the dog called ${dog.name}`} 
+                            />
+                            <div id='dog-story'>
+                                <ul>
+                                    <li>Name: {dog.name}</li>
+                                    <li>Gender: {dog.gender} </li>
+                                    <li>Age: {dog.age}</li>
+                                    <li>Breed: {dog.breed}</li>
+                                    <li>Story: {dog.story}</li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
-                    </ErrorBoundary>
-                    <ErrorBoundary>
+                   
+                    
                     <div id='adoption-pet-queue_cat-container'>
                         <img
                             src={(cat.imageURL) ? cat.imageURL : catPlaceholder}  
@@ -204,7 +203,7 @@ export default class AdoptionPage extends Component {
                             </ul>
                         </div>
                     </div>
-                    </ErrorBoundary>
+                   
                 </section>
 
             </div>
