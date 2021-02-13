@@ -9,21 +9,21 @@ import PageNotFound from '../PageNotFound/PageNotFound';
 
 class App extends Component {
  
-    render() {
-      return (
-        <div className="App">
-          <Header />
+	render() {
+		return (
+			<div className="App">
+				<Header />
          
-            <Switch>
-              <Route exact path='/' component={LandingPage} />
-              <Route path='/adopt' component={AdoptionPage} />
-              <Route component={PageNotFound} />
-            </Switch>
+				<Switch>
+					<Route exact path='/' component={LandingPage} />
+					<Route path='/adopt' component={AdoptionPage} />
+					<Route component={PageNotFound} />
+				</Switch>
         
-          <Footer />
-        </div>
-      );
-    }
-  }
+				<Footer />
+			</div>
+		);
+	}
+}
   
-  export default App;
+export default App;
