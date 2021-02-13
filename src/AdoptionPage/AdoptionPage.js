@@ -29,6 +29,8 @@ export default class AdoptionPage extends Component {
             adoptionQueue: [],
             newFam: {},
             newName: '',
+            trackedUserName: '',
+            userMayAdopt: false,
             error: null
         }
            
@@ -38,11 +40,18 @@ export default class AdoptionPage extends Component {
     componentDidMount(){
         this.fetchPets();
         this.fetchPeople();
-        this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
+        this.startTimer();
 
     }
 
     componentWillUnmount(){
+        this.stopTimer();
+    }
+
+    startTimer() {
+        this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
+    }
+    stopTimer() {
         clearInterval(this.autoAdopt);
     }
 
@@ -65,7 +74,9 @@ export default class AdoptionPage extends Component {
     fetchPeople(){
         PeopleService.get()
             .then(res => res.json())
-            .then(data => this.setState({adoptionQueue: data}))
+            .then(data => {
+                this.setState({adoptionQueue: data})
+            })
             .catch(error => this.setState({ error }));
     }
 
@@ -82,8 +93,10 @@ export default class AdoptionPage extends Component {
         let {newName} = this.state;
 
         // clear input field
+        // store the name as trackedUserName
          this.setState({
-            newName: ''
+            newName: '',
+            trackedUserName: newName,
          });
         
         // post name to API
@@ -95,16 +108,19 @@ export default class AdoptionPage extends Component {
     }
 
     handleAutoAdoption = () => {
-        
-        // randomly choose 'cat' or 'dog' for :pet
-        let petOption = ['cat', 'dog']
+        if(this.state.adoptionQueue[0] === this.state.trackedUserName){
+            this.stopTimer();
+            this.setState({
+                userMayAdopt: true,
+            })
+        } else {
+            // randomly choose 'cat' or 'dog' for :pet
+            let petOption = ['cat', 'dog'];
 
-        let selectedPet = petOption[Math.round(Math.random())];
+            let selectedPet = petOption[Math.round(Math.random())];
 
-        console.log(`autoAdopt ${selectedPet}`)
-
-        this.removePetAndOwner(selectedPet)
-
+            this.removePetAndOwner(selectedPet);
+         }
     }
 
     removePetAndOwner = (petType) => {
@@ -128,6 +144,15 @@ export default class AdoptionPage extends Component {
             newName: value
         })
     }
+
+    adopt(pet){
+        this.removePetAndOwner(pet);
+        this.setState({
+            trackedUserName: '',
+            userMayAdopt: false,
+        });
+        this.startTimer();
+    }
     
     render() {
 
@@ -136,31 +161,34 @@ export default class AdoptionPage extends Component {
             let cat = this.state.cat;
             let dogPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwww.clipartkey.com%2Fmpngs%2Fm%2F5-56136_grayscale-dog-clipart-dog-silhouette-clip-art.png';
             let catPlaceholder = 'https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F60%2FCat_silhouette.svg%2F1920px-Cat_silhouette.svg.png';
-            let adoptionQueue = (this.state.adoptionQueue)
-                ? this.state.adoptionQueue.map(name => {
+            let adoptionQueue = (this.state.adoptionQueue)  ? this.state.adoptionQueue.map(name => {
                     return <li key={cuid()}>{name}</li>
                     }) 
                 : <p>loading...</p>;
+
             let adoptionMsg = this.state.newFam.pet ? `${this.state.newFam.owner} just adopted ${this.state.newFam.pet.name}!`
                 : '';
+
+            let alertUserToAdopt = this.state.userMayAdopt ? <p className='userMayAdoptMsg'> Now it's your turn {this.state.trackedUserName} to choose a pet to adopt!</p> : '';
 
 
         return (
             <div className='flex-container'>
                 <h1>Adoption Page</h1>
                 <section id='adoption-name-queue' className='flex-fullscreen-row'>
-                    <div id='adoption-name-queue_list'>
+                    <section id='adoption-name-queue_list'>
                         <h2>Adoption Queue</h2>
+                        {alertUserToAdopt}
                         <ol>
                             {adoptionQueue}
                         </ol>
-                    </div>
-                    <div id='adoption-name-queue_recent-adoption'>
+                    </section>
+                    <section id='adoption-name-queue_recent-adoption'>
                         <h2>Recent Adoptions</h2>
                         <div>
                             <p>{adoptionMsg}</p>
                         </div>
-                    </div>
+                    </section>
                 </section>
                 <section id='adoption-name-queue_add-name'>
                     <form>
@@ -169,10 +197,12 @@ export default class AdoptionPage extends Component {
                             value={this.state.newName}
                             onChange={e => this.nameChanged(e.target.value)}
                             placeholder='add your name to the list' 
+                            hidden={(this.state.trackedUserName === '')? false : true}
                         />
                         <button 
                             type='submit' 
                             onClick={e => this.handleSubmit(e)}
+                            hidden={(this.state.trackedUserName === '')? false: true}
                         >
                             Submit name
                         </button>
@@ -194,6 +224,14 @@ export default class AdoptionPage extends Component {
                                     <li>Story: {dog.story}</li>
                                 </ul>
                             </div>
+                            <div>
+                                <button
+                                    onClick={() => this.adopt('dog')}
+                                    hidden={(!this.state.userMayAdopt)}
+                                >
+                                    Adopt {dog.name}
+                                </button>
+                            </div>
                         </div>
                    
                     
@@ -211,6 +249,14 @@ export default class AdoptionPage extends Component {
                                 <li>Story: {cat.story}</li>
                             </ul>
                         </div>
+                        <div>
+                                <button
+                                    onClick={() => this.adopt('cat')}
+                                    hidden={(!this.state.userMayAdopt)}
+                                >
+                                    Adopt {cat.name}
+                                </button>
+                            </div>
                     </div>
                    
                 </section>
@@ -219,19 +265,6 @@ export default class AdoptionPage extends Component {
         )
     }
 }
-
-
-/**
- * 🤔💭 thinking: 
- * Next, need to implement functionality for User Story #5
- * When the user's name reaches the top of the list,
- *  the user should be able to select a dog or cat to adopt
- * 
- * 
- * Aside, also need to support the following feature: 
- * - I can see other pets being adopted until I am at the front of the line.
- * so, create a div that displays "name" has adopted "pet name"
- */
 
 
 
