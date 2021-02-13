@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import cuid from 'cuid';
 import {PeopleService} from '../Services/peopleService';
 import {PetService} from '../Services/petService';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 export default class AdoptionPage extends Component {
     
     constructor(props){
@@ -37,12 +38,12 @@ export default class AdoptionPage extends Component {
     componentDidMount(){
         this.fetchPets();
         this.fetchPeople();
-        // this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
+        this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
 
     }
 
     componentWillUnmount(){
-        // clearInterval(this.autoAdopt);
+        clearInterval(this.autoAdopt);
     }
 
     fetchPets(){
@@ -170,9 +171,10 @@ export default class AdoptionPage extends Component {
                     </form>
                 </section>
                 <section id='adoption-pet-queue' className='flex-fullscreen-row'>
+                    <ErrorBoundary>
                     <div id='adoption-pet-queue_dog-container'>
                         <img
-                            src={dog.imageURL || dogPlaceholder} 
+                            src={(dog.imageURL)? dog.imageURL : dogPlaceholder} 
                             alt={`meet the dog called ${dog.name}`} 
                         />
                         <div id='dog-story'>
@@ -185,10 +187,11 @@ export default class AdoptionPage extends Component {
                             </ul>
                         </div>
                     </div>
-                
+                    </ErrorBoundary>
+                    <ErrorBoundary>
                     <div id='adoption-pet-queue_cat-container'>
                         <img
-                            src={cat.imageURL || catPlaceholder}  
+                            src={(cat.imageURL) ? cat.imageURL : catPlaceholder}  
                             alt={`meet the cat called ${cat.name}`}  
                         />
                         <div id='cat-story'>
@@ -201,6 +204,7 @@ export default class AdoptionPage extends Component {
                             </ul>
                         </div>
                     </div>
+                    </ErrorBoundary>
                 </section>
 
             </div>
