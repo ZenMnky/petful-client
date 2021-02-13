@@ -10,4 +10,13 @@ export const PeopleService = {
                   },
             })
     },
+    post(name) {
+        return fetch(`${API_BASE}/people`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body: JSON.stringify({ name: name })
+        })
+    },
 };

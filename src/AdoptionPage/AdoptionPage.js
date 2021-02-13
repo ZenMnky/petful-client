@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
 import cuid from 'cuid';
 import {PeopleService} from '../Services/peopleService';
-
-import config from '../config';
-const API_BASE = config.API_BASE_ENDPOINT;
-
+import {PetService} from '../Services/petService';
 export default class AdoptionPage extends Component {
     
     constructor(props){
@@ -40,27 +37,28 @@ export default class AdoptionPage extends Component {
     componentDidMount(){
         this.fetchPets();
         this.fetchPeople();
+        this.autoAdopt = setInterval(this.handleAutoAdoption, 5000);
+
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.autoAdopt);
     }
 
     fetchPets(){
         this.setState({
             petLoading: true,
         })
-        fetch(`${API_BASE}/pets`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-        })
-        .then(res => res.json())
-        .then(data => {
-            let {cat, dog } = data;
-            this.setState({
-                petLoading: false,
-                dog: dog,
-                cat: cat
+        PetService.get()
+            .then(res => res.json())
+            .then(data => {
+                let {cat, dog } = data;
+                this.setState({
+                    petLoading: false,
+                    dog: dog,
+                    cat: cat
+                })
             })
-        })
     }
 
     fetchPeople(){
@@ -71,13 +69,7 @@ export default class AdoptionPage extends Component {
     }
 
     postName(name){
-        fetch(`${API_BASE}/people`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-              },
-            body: JSON.stringify({ name: name })
-        })
+       PeopleService.post(name)
         .catch(error => this.setState({ error }));
     }
 
@@ -94,10 +86,40 @@ export default class AdoptionPage extends Component {
          });
         
         // post name to API
-        this.postName(newName)
+        PeopleService.post(newName)
+            .catch(error => this.setState({ error }));
 
         // update local state
         this.state.adoptionQueue.push(newName);
+    }
+
+    handleAutoAdoption = () => {
+        
+        // randomly choose 'cat' or 'dog' for :pet
+        let petOption = ['cat', 'dog']
+
+        let selectedPet = petOption[Math.round(Math.random())];
+
+        console.log(`autoAdopt ${selectedPet}`)
+
+        this.removePetAndOwner(selectedPet)
+
+    }
+
+    removePetAndOwner = (petType) => {
+        PetService.remove(petType)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+                this.setState({
+                    newFam: data
+                })
+            })
+            .then(() => {
+                this.fetchPets();
+                this.fetchPeople();
+            } )
+            .catch(error => this.setState({ error }));
     }
        
 
