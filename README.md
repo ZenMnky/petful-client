@@ -1,5 +1,6 @@
 # Petful Client
-_just a quick practice project_
+_just a quick practice project_ 
+
 [Live App](https://zenmnky-petful-client.vercel.app/adopt)  
 [Back End](https://github.com/ZenMnky/petful-server)
 ## Project Brief: 
